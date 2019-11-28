@@ -64,6 +64,11 @@ module.exports = function (app) {
             console.log('Successful database connection');
             const db = client.db(dbName)
 
+            if (req.body.issue_title === '' || req.body.issue_text === '' || req.body.created_by === '') {
+              res.send('Missing required fields')
+              return;
+            }
+
             const issues = db.collection('issues');
             let assigned;
             let status;
@@ -98,6 +103,7 @@ module.exports = function (app) {
       })
       
       .put(function (req, res){
+        const dbName = req.params.project;
         
         client.connect(function(err) {
           if(err) {
@@ -107,7 +113,7 @@ module.exports = function (app) {
             const db = client.db(dbName)
             if (req.body.issue_title === '' && req.body.issue_text === '' && 
               req.body.created_by === '' && req.body.assigned_to === '' && req.body.status_text === '' && req.body.open !== false) {
-                res.send('no updated field sent')
+                res.send('no updated fields sent')
                 return;
               }
             let issue = {updated_on: new Date()};
